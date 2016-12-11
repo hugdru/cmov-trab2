@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Wallet.Models
 {
-    public class Account
+    public class Account : IEnumerable
     {
         private static object syncLock = new object();
-        private Dictionary<string, CurrencyAmount> wallet = new Dictionary<string, CurrencyAmount>();
+        private ConcurrentDictionary<string, CurrencyAmount> wallet = new ConcurrentDictionary<string, CurrencyAmount>();
         private ObservableCollection<CurrencyAmount> UICollection = null;
 
         public bool Deposit(string currency, double amount)
@@ -90,6 +92,11 @@ namespace Wallet.Models
             {
                 UICollection = bindableCollection;
             }
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return ((IEnumerable)wallet).GetEnumerator();
         }
 
         public class CurrencyAmount : INotifyPropertyChanged

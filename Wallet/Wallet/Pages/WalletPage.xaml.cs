@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Wallet.Services;
@@ -9,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using static Wallet.Models.QuotesGraph;
 using Wallet.Models;
+using System.Collections.Generic;
 
 namespace Wallet.Pages
 {
@@ -229,7 +231,7 @@ namespace Wallet.Pages
 
             AsyncCallback callback = (IAsyncResult asyncResult) =>
             {
-                var quote = QuoteService.ParseQuote(asyncResult);
+                var quote = QuoteService.ParseQuoteByCallbackResult(asyncResult);
                 if (quote != null)
                 {
                     Result result = App.QuotesGraph.UpsertQuote(quote);
@@ -265,11 +267,19 @@ namespace Wallet.Pages
 
             };
 
-            QuoteService.FetchQuote(
+            if (!QuoteService.FetchQuoteByCallback(
                 Model.OperationExchangeFromCurrency,
                 Model.OperationExchangeToCurrency,
                 callback
-            );
+            ))
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    OperationExchangeFromCurrencySearchBar.TextColor = Color.Red;
+                    OperationExchangeToCurrencySearchBar.TextColor = Color.Red;
+                    OperationExchangeAmountEntry.TextColor = Color.Red;
+                });
+            }
         }
 
         private void OperationDepositTextChanged(object sender, TextChangedEventArgs e)
@@ -345,7 +355,7 @@ namespace Wallet.Pages
         {
             var searchBar = (SearchBar)sender;
             searchBar.Text = searchBar.Text.ToUpper();
-            if (!Wallet.Models.Currencies.Contains(searchBar.Text))
+            if (!Currencies.Contains(searchBar.Text))
             {
                 if (searchBar.Text != "")
                 {
@@ -384,19 +394,58 @@ namespace Wallet.Pages
             CalculateTotal();
         }
 
-        private void CalculateTotal()
+        private async void CalculateTotal()
         {
-            if (!Wallet.Models.Currencies.Contains(Model.TotalCurrency))
+            Device.BeginInvokeOnMainThread(() =>
             {
-                if (Model.TotalCurrency != "")
+                TotalAmountLabel.TextColor = Color.Black;
+            });
+            var targetCurrency = Model.TotalCurrency;
+            if (!Currencies.Contains(targetCurrency))
+            {
+                if (targetCurrency != "")
                 {
                     TotalCurrencySearchBar.TextColor = Color.Red;
                 }
+                return;
             }
             else
             {
                 TotalCurrencySearchBar.TextColor = Color.Black;
             }
+
+            Task<List<Quote>> getQuotesTask = QuoteService.FetchQuotesAsync(targetCurrency, App.Account);
+            List<Quote> quotes = await getQuotesTask;
+            if (quotes != null)
+            {
+                foreach (Quote quote in quotes)
+                {
+                    App.QuotesGraph.UpsertQuote(quote);
+                }
+            }
+
+            double totalAmount = 0.0;
+            foreach (KeyValuePair<string, CurrencyAmount> tuple in App.Account)
+            {
+                double quoteValue = 0.0;
+                if (App.QuotesGraph.GetQuote(tuple.Key, targetCurrency, out quoteValue) != Result.Found)
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        TotalAmountLabel.TextColor = Color.Red;
+                        Model.TotalAmount = 0;
+                    });
+                    return;
+                }
+                totalAmount += tuple.Value.Amount * quoteValue;
+            }
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                TotalAmountLabel.TextColor = Color.Navy;
+                Model.TotalAmount = totalAmount;
+            });
+            return;
         }
     }
 }

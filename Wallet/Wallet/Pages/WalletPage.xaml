@@ -47,11 +47,12 @@
                 Text="Amount"
                 VerticalOptions="Center" />
             <Label
+                x:Name="TotalAmountLabel"
                 Grid.Row="0"
                 Grid.Column="3"
                 FontSize="Medium"
                 Text="{Binding TotalAmount, Mode=OneWay}"
-                TextColor="Blue"
+                TextColor="Navy"
                 VerticalOptions="Center" />
         </Grid>
 
