@@ -18,7 +18,7 @@ namespace Wallet
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new WalletPage();
         }
 
         protected override void OnStart()

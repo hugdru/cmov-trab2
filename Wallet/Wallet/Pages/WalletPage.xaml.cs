@@ -247,16 +247,22 @@ namespace Wallet.Pages
                         return;
                     }
                 }
-                if (!App.Account.Exchange(amount, currencyFrom, amount * quote.Value, currencyTo))
+                if (!App.Account.Exchange(amount, currencyFrom, quote.Value, currencyTo))
                 {
-                    OperationExchangeAmountEntry.TextColor = Color.Red;
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        OperationExchangeAmountEntry.TextColor = Color.Red;
+                    });
                 }
 
-                OperationExchangeFromCurrencySearchBar.TextColor = Color.Green;
-                OperationExchangeToCurrencySearchBar.TextColor = Color.Green;
-                OperationExchangeAmountEntry.TextColor = Color.Green;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    OperationExchangeFromCurrencySearchBar.TextColor = Color.Green;
+                    OperationExchangeToCurrencySearchBar.TextColor = Color.Green;
+                    OperationExchangeAmountEntry.TextColor = Color.Green;
+                    exchangeSuccessful = true;
+                });
 
-                exchangeSuccessful = true;
             };
 
             QuoteService.FetchQuote(
@@ -272,8 +278,19 @@ namespace Wallet.Pages
             {
                 OperationDepositCurrencySearchBar.TextColor = Color.Black;
                 OperationDepositAmountEntry.TextColor = Color.Black;
+                depositSuccessful = false;
             }
-            depositSuccessful = false;
+            else
+            {
+                if (sender is Entry)
+                {
+                    ((Entry)sender).TextColor = Color.Black;
+                }
+            }
+            if (sender is SearchBar)
+            {
+                ValidateCurrencySearchBar(sender);
+            }
         }
 
         private void OperationWithdrawTextChanged(object sender, TextChangedEventArgs e)
@@ -282,8 +299,19 @@ namespace Wallet.Pages
             {
                 OperationWithdrawCurrencySearchBar.TextColor = Color.Black;
                 OperationWithdrawAmountEntry.TextColor = Color.Black;
+                withdrawSuccessful = false;
             }
-            withdrawSuccessful = false;
+            else
+            {
+                if (sender is Entry)
+                {
+                    ((Entry)sender).TextColor = Color.Black;
+                }
+            }
+            if (sender is SearchBar)
+            {
+                ValidateCurrencySearchBar(sender);
+            }
         }
 
         private void OperationExchangeTextChanged(object sender, TextChangedEventArgs e)
@@ -293,17 +321,36 @@ namespace Wallet.Pages
                 OperationExchangeFromCurrencySearchBar.TextColor = Color.Black;
                 OperationExchangeToCurrencySearchBar.TextColor = Color.Black;
                 OperationExchangeAmountEntry.TextColor = Color.Black;
+                exchangeSuccessful = false;
             }
-            exchangeSuccessful = false;
+            else
+            {
+                if (sender is Entry)
+                {
+                    ((Entry)sender).TextColor = Color.Black;
+                }
+            }
+            if (sender is SearchBar)
+            {
+                ValidateCurrencySearchBar(sender);
+            }
         }
 
         private void CheckCurrencyUnfocused(object sender, FocusEventArgs e)
+        {
+            ValidateCurrencySearchBar(sender);
+        }
+
+        private void ValidateCurrencySearchBar(object sender)
         {
             var searchBar = (SearchBar)sender;
             searchBar.Text = searchBar.Text.ToUpper();
             if (!Wallet.Models.Currencies.Contains(searchBar.Text))
             {
-                searchBar.TextColor = Color.Red;
+                if (searchBar.Text != "")
+                {
+                    searchBar.TextColor = Color.Red;
+                }
             }
             else
             {
@@ -339,7 +386,17 @@ namespace Wallet.Pages
 
         private void CalculateTotal()
         {
-
+            if (!Wallet.Models.Currencies.Contains(Model.TotalCurrency))
+            {
+                if (Model.TotalCurrency != "")
+                {
+                    TotalCurrencySearchBar.TextColor = Color.Red;
+                }
+            }
+            else
+            {
+                TotalCurrencySearchBar.TextColor = Color.Black;
+            }
         }
     }
 }

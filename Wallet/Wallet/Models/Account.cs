@@ -60,13 +60,14 @@ namespace Wallet.Models
             }
         }
 
-        public bool Exchange(double fromAmount, string currencyFrom, double toAmount, string currencyTo)
+        public bool Exchange(double fromAmount, string currencyFrom, double quoteValue, string currencyTo)
         {
-
             if (currencyFrom == null || currencyTo == null)
             {
                 return false;
             }
+
+            double toAmount = fromAmount * quoteValue;
 
             lock (syncLock)
             {

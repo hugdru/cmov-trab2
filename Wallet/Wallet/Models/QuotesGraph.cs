@@ -40,7 +40,6 @@ namespace Wallet.Models
                 {
                     edgesToFrom = new Dictionary<string, double>();
                     graph[quote.To] = edgesToFrom;
-                    result = Result.Inserted;
                 }
                 edgesToFrom[quote.From] = 1 / quote.Value;
                 return result;
