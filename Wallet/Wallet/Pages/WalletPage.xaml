@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Wallet.Pages.WalletPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Wallet.Pages;assembly=Wallet"
+    Title="Wallet">
+
+    <StackLayout Padding="10,5">
+        <Label
+            FontAttributes="Bold"
+            FontSize="Large"
+            HorizontalTextAlignment="Start"
+            Text="Total"
+            TextColor="Gray"
+            VerticalTextAlignment="Center" />
+        <Grid Padding="10,5" HorizontalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                FontAttributes="Italic"
+                Text="Currency"
+                VerticalOptions="Center" />
+            <SearchBar
+                x:Name="TotalCurrencySearchBar"
+                Grid.Row="0"
+                Grid.Column="1"
+                Text="{Binding TotalCurrency, Mode=TwoWay}"
+                TextColor="Black"
+                Unfocused="CheckCurrencyUnfocused"
+                VerticalOptions="Center" />
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                FontAttributes="Italic"
+                Text="Amount"
+                VerticalOptions="Center" />
+            <Label
+                Grid.Row="0"
+                Grid.Column="3"
+                FontSize="Medium"
+                Text="{Binding TotalAmount, Mode=OneWay}"
+                TextColor="Blue"
+                VerticalOptions="Center" />
+        </Grid>
+
+        <Label
+            FontAttributes="Bold"
+            FontSize="Large"
+            HorizontalTextAlignment="Start"
+            Text="Operations"
+            TextColor="Gray"
+            VerticalTextAlignment="Center" />
+        <Grid Padding="10,5" HorizontalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Grid
+                Grid.Row="1"
+                Grid.Column="0"
+                HorizontalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40*" />
+                    <ColumnDefinition Width="60*" />
+                </Grid.ColumnDefinitions>
+                <SearchBar
+                    x:Name="OperationDepositCurrencySearchBar"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Placeholder="Currency"
+                    Text="{Binding OperationDepositCurrency, Mode=TwoWay}"
+                    TextChanged="OperationDepositTextChanged"
+                    TextColor="Black"
+                    Unfocused="CheckCurrencyUnfocused"
+                    VerticalOptions="Center" />
+                <Entry
+                    x:Name="OperationDepositAmountEntry"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Keyboard="Numeric"
+                    Placeholder="Amount"
+                    Text="{Binding OperationDepositAmount, Mode=OneWayToSource}"
+                    TextChanged="OperationDepositTextChanged"
+                    TextColor="Black"
+                    VerticalOptions="Center" />
+            </Grid>
+            <Button
+                Grid.Row="1"
+                Grid.Column="1"
+                Clicked="DepositCliked"
+                Text="Deposit" />
+
+            <Grid
+                Grid.Row="2"
+                Grid.Column="0"
+                HorizontalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40*" />
+                    <ColumnDefinition Width="60*" />
+                </Grid.ColumnDefinitions>
+                <SearchBar
+                    x:Name="OperationWithdrawCurrencySearchBar"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Placeholder="Currency"
+                    Text="{Binding OperationWithdrawCurrency, Mode=TwoWay}"
+                    TextChanged="OperationWithdrawTextChanged"
+                    TextColor="Black"
+                    Unfocused="CheckCurrencyUnfocused"
+                    VerticalOptions="Center" />
+                <Entry
+                    x:Name="OperationWithdrawAmountEntry"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Keyboard="Numeric"
+                    Placeholder="Amount"
+                    Text="{Binding OperationWithdrawAmount, Mode=OneWayToSource}"
+                    TextChanged="OperationWithdrawTextChanged"
+                    TextColor="Black"
+                    VerticalOptions="Center" />
+            </Grid>
+            <Button
+                Grid.Row="2"
+                Grid.Column="1"
+                Clicked="WithdrawCliked"
+                Text="Withdraw" />
+
+            <Grid
+                Grid.Row="3"
+                Grid.Column="0"
+                HorizontalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40*" />
+                    <ColumnDefinition Width="20*" />
+                    <ColumnDefinition Width="40*" />
+                </Grid.ColumnDefinitions>
+                <SearchBar
+                    x:Name="OperationExchangeFromCurrencySearchBar"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Placeholder="Currency"
+                    Text="{Binding OperationExchangeFromCurrency, Mode=TwoWay}"
+                    TextChanged="OperationExchangeTextChanged"
+                    TextColor="Black"
+                    Unfocused="CheckCurrencyUnfocused"
+                    VerticalOptions="Center" />
+                <Entry
+                    x:Name="OperationExchangeAmountEntry"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Keyboard="Numeric"
+                    Placeholder="Amount"
+                    Text="{Binding OperationExchangeAmount, Mode=OneWayToSource}"
+                    TextChanged="OperationExchangeTextChanged"
+                    TextColor="Black"
+                    VerticalOptions="Center" />
+                <SearchBar
+                    x:Name="OperationExchangeToCurrencySearchBar"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Placeholder="Currency"
+                    Text="{Binding OperationExchangeToCurrency, Mode=TwoWay}"
+                    TextChanged="OperationExchangeTextChanged"
+                    TextColor="Black"
+                    Unfocused="CheckCurrencyUnfocused"
+                    VerticalOptions="Center" />
+            </Grid>
+            <Button
+                Grid.Row="3"
+                Grid.Column="1"
+                Clicked="ExchangeCliked"
+                Text="Exchange" />
+        </Grid>
+
+        <Label
+            FontAttributes="Bold"
+            FontSize="Large"
+            HorizontalTextAlignment="Start"
+            Text="Account"
+            TextColor="Gray"
+            VerticalTextAlignment="Center" />
+        <ListView
+            x:Name="AccountWalletListView"
+            IsVisible="True"
+            ItemsSource="{Binding AccountWallet, Mode=OneWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="{Binding Currency, Mode=OneWay}" />
+                            <Label Text="{Binding Amount, Mode=OneWay}" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>
