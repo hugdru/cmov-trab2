@@ -205,7 +205,7 @@ namespace Wallet.Pages
             withdrawSuccessful = true;
         }
 
-        private void ExchangeCliked(object sender, EventArgs e)
+        private async void ExchangeCliked(object sender, EventArgs e)
         {
             string currencyFrom = Model.OperationExchangeFromCurrency;
             string currencyTo = Model.OperationExchangeToCurrency;
@@ -229,57 +229,41 @@ namespace Wallet.Pages
                 return;
             }
 
-            AsyncCallback callback = (IAsyncResult asyncResult) =>
+            Task<Quote> getQuoteTask = QuoteService.FetchQuoteAsync(currencyFrom, currencyTo);
+            Quote quote = await getQuoteTask;
+
+            if (quote != null)
             {
-                var quote = QuoteService.ParseQuoteByCallbackResult(asyncResult);
-                if (quote != null)
+                Result result = App.QuotesGraph.UpsertQuote(quote);
+                if (result != Result.Inserted && result != Result.Updated)
                 {
-                    Result result = App.QuotesGraph.UpsertQuote(quote);
-                    if (result != Result.Inserted && result != Result.Updated)
-                    {
-                        return;
-                    }
+                    return;
                 }
-                else
+            }
+            else
+            {
+                quote = new Quote(currencyFrom, currencyTo);
+                Result result = App.QuotesGraph.GetQuote(quote);
+                if (result != Result.Found)
                 {
-                    quote = new Quote(currencyFrom, currencyTo);
-                    Result result = App.QuotesGraph.GetQuote(quote);
-                    if (result != Result.Found)
-                    {
-                        return;
-                    }
+                    return;
                 }
-                if (!App.Account.Exchange(amount, currencyFrom, quote.Value, currencyTo))
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        OperationExchangeAmountEntry.TextColor = Color.Red;
-                    });
-                }
-
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    OperationExchangeFromCurrencySearchBar.TextColor = Color.Green;
-                    OperationExchangeToCurrencySearchBar.TextColor = Color.Green;
-                    OperationExchangeAmountEntry.TextColor = Color.Green;
-                    exchangeSuccessful = true;
-                });
-
-            };
-
-            if (!QuoteService.FetchQuoteByCallback(
-                Model.OperationExchangeFromCurrency,
-                Model.OperationExchangeToCurrency,
-                callback
-            ))
+            }
+            if (!App.Account.Exchange(amount, currencyFrom, quote.Value, currencyTo))
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    OperationExchangeFromCurrencySearchBar.TextColor = Color.Red;
-                    OperationExchangeToCurrencySearchBar.TextColor = Color.Red;
                     OperationExchangeAmountEntry.TextColor = Color.Red;
                 });
             }
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                OperationExchangeFromCurrencySearchBar.TextColor = Color.Green;
+                OperationExchangeToCurrencySearchBar.TextColor = Color.Green;
+                OperationExchangeAmountEntry.TextColor = Color.Green;
+                exchangeSuccessful = true;
+            });
         }
 
         private void OperationDepositTextChanged(object sender, TextChangedEventArgs e)

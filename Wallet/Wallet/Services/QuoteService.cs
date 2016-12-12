@@ -104,6 +104,15 @@ namespace Wallet.Services
                 {
                     return null;
                 }
+
+                Quote quote = new Quote(currencyFrom, currencyTo);
+
+                if (currencyFrom.Equals(currencyTo))
+                {
+                    quote.Value = 1.0;
+                    return quote;
+                }
+
                 HttpClient httpClient = new HttpClient();
                 Task<HttpResponseMessage> getTask = httpClient.GetAsync(BuildUri(currencyFrom, currencyTo));
                 HttpResponseMessage response = await getTask;
@@ -111,7 +120,6 @@ namespace Wallet.Services
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    Quote quote = new Quote(currencyFrom, currencyTo);
                     if (!ParseQuote(content, quote))
                     {
                         return null;
