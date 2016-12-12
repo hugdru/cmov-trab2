@@ -440,6 +440,7 @@ namespace Wallet.Pages
 
         private void TotalCurrencyTextChanged(object sender, TextChangedEventArgs e)
         {
+            TotalCurrencySearchBar.Text = TotalCurrencySearchBar.Text.ToUpper();
             CalculateTotal();
         }
     }
