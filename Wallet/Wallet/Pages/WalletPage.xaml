@@ -35,9 +35,9 @@
                 x:Name="TotalCurrencySearchBar"
                 Grid.Row="0"
                 Grid.Column="1"
-                Text="{Binding TotalCurrency, Mode=TwoWay}"
+                Text="{Binding TotalCurrency, Mode=OneWayToSource}"
+                TextChanged="TotalCurrencyTextChanged"
                 TextColor="Black"
-                Unfocused="CheckCurrencyUnfocused"
                 VerticalOptions="Center" />
 
             <Label

@@ -400,19 +400,24 @@ namespace Wallet.Pages
             {
                 TotalAmountLabel.TextColor = Color.Black;
             });
+
             var targetCurrency = Model.TotalCurrency;
             if (!Currencies.Contains(targetCurrency))
             {
                 if (targetCurrency != "")
                 {
-                    TotalCurrencySearchBar.TextColor = Color.Red;
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        TotalCurrencySearchBar.TextColor = Color.Red;
+                    });
                 }
                 return;
             }
-            else
+
+            Device.BeginInvokeOnMainThread(() =>
             {
                 TotalCurrencySearchBar.TextColor = Color.Black;
-            }
+            });
 
             Task<List<Quote>> getQuotesTask = QuoteService.FetchQuotesAsync(targetCurrency, App.Account);
             List<Quote> quotes = await getQuotesTask;
@@ -442,10 +447,16 @@ namespace Wallet.Pages
 
             Device.BeginInvokeOnMainThread(() =>
             {
+                TotalCurrencySearchBar.TextColor = Color.Navy;
                 TotalAmountLabel.TextColor = Color.Navy;
                 Model.TotalAmount = totalAmount;
             });
             return;
+        }
+
+        private void TotalCurrencyTextChanged(object sender, TextChangedEventArgs e)
+        {
+            CalculateTotal();
         }
     }
 }
