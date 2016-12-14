@@ -10,10 +10,10 @@ namespace Wallet.Models
     public class Account : IEnumerable
     {
         private static object syncLock = new object();
-        private ConcurrentDictionary<string, CurrencyAmount> wallet = new ConcurrentDictionary<string, CurrencyAmount>();
+        private ConcurrentDictionary<Currency, CurrencyAmount> wallet = new ConcurrentDictionary<Currency, CurrencyAmount>();
         private ObservableCollection<CurrencyAmount> UICollection = null;
 
-        public bool Deposit(string currency, double amount)
+        public bool Deposit(Currency currency, decimal amount)
         {
 
             if (amount < 0 || currency == null)
@@ -38,7 +38,7 @@ namespace Wallet.Models
             }
         }
 
-        public bool Withdraw(string currency, double amount)
+        public bool Withdraw(Currency currency, decimal amount)
         {
             if (amount < 0)
             {
@@ -62,14 +62,14 @@ namespace Wallet.Models
             }
         }
 
-        public bool Exchange(double fromAmount, string currencyFrom, double quoteValue, string currencyTo)
+        public bool Exchange(decimal fromAmount, Currency currencyFrom, decimal quoteValue, Currency currencyTo)
         {
             if (currencyFrom == null || currencyTo == null)
             {
                 return false;
             }
 
-            double toAmount = fromAmount * quoteValue;
+            decimal toAmount = fromAmount * quoteValue;
 
             lock (syncLock)
             {
@@ -122,8 +122,8 @@ namespace Wallet.Models
                 }
             }
 
-            private double amount;
-            public double Amount
+            private decimal amount;
+            public decimal Amount
             {
                 set
                 {
@@ -148,9 +148,13 @@ namespace Wallet.Models
             }
             public event PropertyChangedEventHandler PropertyChanged;
 
-            public CurrencyAmount(string currency = "", double amount = 0)
+            public CurrencyAmount(Currency currency, decimal amount = 0)
             {
-                Currency = currency;
+                if (currency == null)
+                {
+                    throw new System.ArgumentNullException();
+                }
+                Currency = currency.Name;
                 Amount = amount;
             }
 
@@ -165,8 +169,7 @@ namespace Wallet.Models
                 return otherCurrencyAmount != null && currency.Equals(otherCurrencyAmount.currency);
             }
 
-
-            public void Add(double add)
+            public void Add(decimal add)
             {
                 lock (syncLock)
                 {

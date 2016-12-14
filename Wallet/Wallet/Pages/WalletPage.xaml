@@ -3,8 +3,18 @@
     x:Class="Wallet.Pages.WalletPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Wallet.Controls;assembly=Wallet"
+    xmlns:fe="clr-namespace:FreshEssentials;assembly=Wallet"
     xmlns:local="clr-namespace:Wallet.Pages;assembly=Wallet"
     Title="Wallet">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type controls:BindablePicker}">
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <StackLayout Padding="10,5">
         <Label
@@ -31,14 +41,15 @@
                 FontAttributes="Italic"
                 Text="Currency"
                 VerticalOptions="Center" />
-            <SearchBar
-                x:Name="TotalCurrencySearchBar"
+
+            <controls:BindablePicker
+                x:Name="TotalCurrencyPicker"
+                Title="Select a Currency"
                 Grid.Row="0"
                 Grid.Column="1"
-                Text="{Binding TotalCurrency, Mode=OneWayToSource}"
-                TextChanged="TotalCurrencyTextChanged"
-                TextColor="Black"
-                VerticalOptions="Center" />
+                DisplayMemberPath="Name"
+                ItemsSource="{Binding Currencies}"
+                SelectedItem="{Binding TotalCurrency, Mode=TwoWay}" />
 
             <Label
                 Grid.Row="0"
@@ -52,7 +63,6 @@
                 Grid.Column="3"
                 FontSize="Medium"
                 Text="{Binding TotalAmount, Mode=OneWay}"
-                TextColor="Navy"
                 VerticalOptions="Center" />
         </Grid>
 
@@ -75,7 +85,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid
-                Grid.Row="1"
+                Grid.Row="0"
                 Grid.Column="0"
                 HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
@@ -85,16 +95,15 @@
                     <ColumnDefinition Width="40*" />
                     <ColumnDefinition Width="60*" />
                 </Grid.ColumnDefinitions>
-                <SearchBar
-                    x:Name="OperationDepositCurrencySearchBar"
+
+                <controls:BindablePicker
+                    x:Name="OperationDepositCurrencyPicker"
+                    Title="Select a Currency"
                     Grid.Row="0"
                     Grid.Column="0"
-                    Placeholder="Currency"
-                    Text="{Binding OperationDepositCurrency, Mode=TwoWay}"
-                    TextChanged="OperationDepositTextChanged"
-                    TextColor="Black"
-                    Unfocused="CheckCurrencyUnfocused"
-                    VerticalOptions="Center" />
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding Currencies}"
+                    SelectedItem="{Binding OperationDepositCurrency, Mode=TwoWay}" />
                 <Entry
                     x:Name="OperationDepositAmountEntry"
                     Grid.Row="0"
@@ -102,18 +111,16 @@
                     Keyboard="Numeric"
                     Placeholder="Amount"
                     Text="{Binding OperationDepositAmount, Mode=OneWayToSource}"
-                    TextChanged="OperationDepositTextChanged"
-                    TextColor="Black"
                     VerticalOptions="Center" />
             </Grid>
             <Button
-                Grid.Row="1"
+                Grid.Row="0"
                 Grid.Column="1"
                 Clicked="DepositCliked"
                 Text="Deposit" />
 
             <Grid
-                Grid.Row="2"
+                Grid.Row="1"
                 Grid.Column="0"
                 HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
@@ -123,16 +130,14 @@
                     <ColumnDefinition Width="40*" />
                     <ColumnDefinition Width="60*" />
                 </Grid.ColumnDefinitions>
-                <SearchBar
-                    x:Name="OperationWithdrawCurrencySearchBar"
+                <controls:BindablePicker
+                    x:Name="OperationWithdrawCurrencyPicker"
+                    Title="Select a Currency"
                     Grid.Row="0"
                     Grid.Column="0"
-                    Placeholder="Currency"
-                    Text="{Binding OperationWithdrawCurrency, Mode=TwoWay}"
-                    TextChanged="OperationWithdrawTextChanged"
-                    TextColor="Black"
-                    Unfocused="CheckCurrencyUnfocused"
-                    VerticalOptions="Center" />
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding Currencies}"
+                    SelectedItem="{Binding OperationWithdrawCurrency, Mode=TwoWay}" />
                 <Entry
                     x:Name="OperationWithdrawAmountEntry"
                     Grid.Row="0"
@@ -140,18 +145,16 @@
                     Keyboard="Numeric"
                     Placeholder="Amount"
                     Text="{Binding OperationWithdrawAmount, Mode=OneWayToSource}"
-                    TextChanged="OperationWithdrawTextChanged"
-                    TextColor="Black"
                     VerticalOptions="Center" />
             </Grid>
             <Button
-                Grid.Row="2"
+                Grid.Row="1"
                 Grid.Column="1"
                 Clicked="WithdrawCliked"
                 Text="Withdraw" />
 
             <Grid
-                Grid.Row="3"
+                Grid.Row="2"
                 Grid.Column="0"
                 HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
@@ -162,16 +165,14 @@
                     <ColumnDefinition Width="20*" />
                     <ColumnDefinition Width="40*" />
                 </Grid.ColumnDefinitions>
-                <SearchBar
-                    x:Name="OperationExchangeFromCurrencySearchBar"
+                <controls:BindablePicker
+                    x:Name="OperationExchangeFromCurrencyPicker"
+                    Title="Select a Currency"
                     Grid.Row="0"
                     Grid.Column="0"
-                    Placeholder="Currency"
-                    Text="{Binding OperationExchangeFromCurrency, Mode=TwoWay}"
-                    TextChanged="OperationExchangeTextChanged"
-                    TextColor="Black"
-                    Unfocused="CheckCurrencyUnfocused"
-                    VerticalOptions="Center" />
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding Currencies}"
+                    SelectedItem="{Binding OperationExchangeFromCurrency, Mode=TwoWay}" />
                 <Entry
                     x:Name="OperationExchangeAmountEntry"
                     Grid.Row="0"
@@ -179,22 +180,18 @@
                     Keyboard="Numeric"
                     Placeholder="Amount"
                     Text="{Binding OperationExchangeAmount, Mode=OneWayToSource}"
-                    TextChanged="OperationExchangeTextChanged"
-                    TextColor="Black"
                     VerticalOptions="Center" />
-                <SearchBar
-                    x:Name="OperationExchangeToCurrencySearchBar"
+                <controls:BindablePicker
+                    x:Name="OperationExchangeToCurrencyPicker"
+                    Title="Select a Currency"
                     Grid.Row="0"
                     Grid.Column="2"
-                    Placeholder="Currency"
-                    Text="{Binding OperationExchangeToCurrency, Mode=TwoWay}"
-                    TextChanged="OperationExchangeTextChanged"
-                    TextColor="Black"
-                    Unfocused="CheckCurrencyUnfocused"
-                    VerticalOptions="Center" />
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding Currencies}"
+                    SelectedItem="{Binding OperationExchangeToCurrency, Mode=TwoWay}" />
             </Grid>
             <Button
-                Grid.Row="3"
+                Grid.Row="2"
                 Grid.Column="1"
                 Clicked="ExchangeCliked"
                 Text="Exchange" />

@@ -11,14 +11,14 @@ namespace Wallet
 {
     public partial class App : Application
     {
-
+        public static Wallet.Models.Currencies Currencies = new Wallet.Models.Currencies();
         public static Wallet.Models.Account Account = new Wallet.Models.Account();
         public static Wallet.Models.QuotesGraph QuotesGraph = new Wallet.Models.QuotesGraph();
         public App()
         {
             InitializeComponent();
 
-            MainPage = new WalletPage();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart()

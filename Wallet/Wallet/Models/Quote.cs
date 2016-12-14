@@ -4,12 +4,12 @@
     {
         public string From { set; get; }
         public string To { set; get; }
-        public double Value { set; get; }
+        public decimal Value { set; get; }
 
-        public Quote(string F, string T, double V = 0.0)
+        public Quote(Currency F, Currency T, decimal V = 0.0M)
         {
-            From = F;
-            To = T;
+            From = F.Name;
+            To = T.Name;
             Value = V;
         }
     }

@@ -18,13 +18,13 @@ namespace Wallet.Services
             return string.Format(unformatedUri, currencyFrom, currencyTo);
         }
 
-        public static bool FetchQuoteByCallback(string currencyFrom, string currencyTo, AsyncCallback callback)
+        public static bool FetchQuoteByCallback(Currency currencyFrom, Currency currencyTo, AsyncCallback callback)
         {
-            if (String.IsNullOrEmpty(currencyFrom) || String.IsNullOrEmpty(currencyTo) || callback == null)
+            if (currencyFrom == null || currencyTo == null || callback == null)
             {
                 return false;
             }
-            var request = HttpWebRequest.Create(BuildUri(currencyFrom, currencyTo));
+            var request = HttpWebRequest.Create(BuildUri(currencyFrom.Name, currencyTo.Name));
             request.Method = "GET";
             var quote = new Quote(currencyFrom, currencyTo);
             var state = new Tuple<Quote, WebRequest>(quote, request);
@@ -41,7 +41,7 @@ namespace Wallet.Services
             }
             try
             {
-                quote.Value = double.Parse(values[1]);
+                quote.Value = decimal.Parse(values[1]);
             }
             catch (Exception e)
             {
@@ -80,10 +80,10 @@ namespace Wallet.Services
             return null;
         }
 
-        public static async Task<List<Quote>> FetchQuotesAsync(string targetCurrency, Account account)
+        public static async Task<List<Quote>> FetchQuotesAsync(Currency targetCurrency, Account account)
         {
             List<Quote> quotes = new List<Quote>();
-            foreach (KeyValuePair<string, CurrencyAmount> tuple in account)
+            foreach (KeyValuePair<Currency, CurrencyAmount> tuple in account)
             {
                 Task<Quote> getQuoteTask = FetchQuoteAsync(tuple.Key, targetCurrency);
                 Quote quote = await getQuoteTask;
@@ -96,11 +96,11 @@ namespace Wallet.Services
             return quotes;
         }
 
-        public static async Task<Quote> FetchQuoteAsync(string currencyFrom, string currencyTo)
+        public static async Task<Quote> FetchQuoteAsync(Currency currencyFrom, Currency currencyTo)
         {
             try
             {
-                if (String.IsNullOrEmpty(currencyFrom) || String.IsNullOrEmpty(currencyTo))
+                if (currencyFrom == null || currencyTo == null)
                 {
                     return null;
                 }
@@ -109,12 +109,12 @@ namespace Wallet.Services
 
                 if (currencyFrom.Equals(currencyTo))
                 {
-                    quote.Value = 1.0;
+                    quote.Value = 1.0M;
                     return quote;
                 }
 
                 HttpClient httpClient = new HttpClient();
-                Task<HttpResponseMessage> getTask = httpClient.GetAsync(BuildUri(currencyFrom, currencyTo));
+                Task<HttpResponseMessage> getTask = httpClient.GetAsync(BuildUri(currencyFrom.Name, currencyTo.Name));
                 HttpResponseMessage response = await getTask;
 
                 if (response.StatusCode == HttpStatusCode.OK)

@@ -18,8 +18,8 @@ namespace Wallet.Pages
     {
         public class WalletPageModel : INotifyPropertyChanged
         {
-            private string totalCurrency;
-            public string TotalCurrency
+            private Currency totalCurrency;
+            public Currency TotalCurrency
             {
                 set
                 {
@@ -30,8 +30,8 @@ namespace Wallet.Pages
                     return totalCurrency;
                 }
             }
-            private double totalAmount;
-            public double TotalAmount
+            private decimal totalAmount;
+            public decimal TotalAmount
             {
                 set
                 {
@@ -42,8 +42,8 @@ namespace Wallet.Pages
                     return totalAmount;
                 }
             }
-            private string operationDepositCurrency;
-            public string OperationDepositCurrency
+            private Currency operationDepositCurrency;
+            public Currency OperationDepositCurrency
             {
                 set
                 {
@@ -54,8 +54,8 @@ namespace Wallet.Pages
                     return operationDepositCurrency;
                 }
             }
-            private double operationDepositAmount;
-            public double OperationDepositAmount
+            private decimal operationDepositAmount;
+            public decimal OperationDepositAmount
             {
                 set
                 {
@@ -66,8 +66,8 @@ namespace Wallet.Pages
                     return operationDepositAmount;
                 }
             }
-            private string operationWithdrawCurrency;
-            public string OperationWithdrawCurrency
+            private Currency operationWithdrawCurrency;
+            public Currency OperationWithdrawCurrency
             {
                 set
                 {
@@ -78,8 +78,8 @@ namespace Wallet.Pages
                     return operationWithdrawCurrency;
                 }
             }
-            private double operationWithdrawAmount;
-            public double OperationWithdrawAmount
+            private decimal operationWithdrawAmount;
+            public decimal OperationWithdrawAmount
             {
                 set
                 {
@@ -90,8 +90,8 @@ namespace Wallet.Pages
                     return operationWithdrawAmount;
                 }
             }
-            private string operationExchangeFromCurrency;
-            public string OperationExchangeFromCurrency
+            private Currency operationExchangeFromCurrency;
+            public Currency OperationExchangeFromCurrency
             {
                 set
                 {
@@ -102,8 +102,8 @@ namespace Wallet.Pages
                     return operationExchangeFromCurrency;
                 }
             }
-            private string operationExchangeToCurrency;
-            public string OperationExchangeToCurrency
+            private Currency operationExchangeToCurrency;
+            public Currency OperationExchangeToCurrency
             {
                 set
                 {
@@ -114,8 +114,8 @@ namespace Wallet.Pages
                     return operationExchangeToCurrency;
                 }
             }
-            private double operationExchangeAmount;
-            public double OperationExchangeAmount
+            private decimal operationExchangeAmount;
+            public decimal OperationExchangeAmount
             {
                 set
                 {
@@ -127,19 +127,21 @@ namespace Wallet.Pages
                 }
             }
             public ObservableCollection<CurrencyAmount> AccountWallet { set; get; }
+            public ObservableCollection<Currency> Currencies { set; get; }
 
             public WalletPageModel()
             {
-                TotalCurrency = "";
+                TotalCurrency = null;
                 TotalAmount = 0;
-                OperationDepositCurrency = "";
+                OperationDepositCurrency = null;
                 OperationDepositAmount = 0;
-                OperationWithdrawCurrency = "";
+                OperationWithdrawCurrency = null;
                 OperationWithdrawAmount = 0;
-                OperationExchangeFromCurrency = "";
-                OperationExchangeToCurrency = "";
+                OperationExchangeFromCurrency = null;
+                OperationExchangeToCurrency = null;
                 OperationExchangeAmount = 0;
                 AccountWallet = new ObservableCollection<CurrencyAmount>();
+                Currencies = new ObservableCollection<Currency>();
             }
 
             private void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "")
@@ -165,69 +167,43 @@ namespace Wallet.Pages
             BindingContext = Model;
         }
 
+        public ObservableCollection<Currency> GetBindableCurrencies()
+        {
+            return Model.Currencies;
+        }
+
+        public void RegisterCurrencies(ObservableCollection<Currency> currencies)
+        {
+            Model.Currencies = currencies;
+        }
+
         private void DepositCliked(object sender, EventArgs e)
         {
-            if (!Models.Currencies.Contains(Model.OperationDepositCurrency))
-            {
-                if (Model.OperationDepositCurrency != "")
-                {
-                    OperationDepositCurrencySearchBar.TextColor = Color.Red;
-                }
-                return;
-            }
             if (!App.Account.Deposit(Model.OperationDepositCurrency, Model.OperationDepositAmount))
             {
-                OperationDepositAmountEntry.TextColor = Color.Red;
+                // Notification
                 return;
             }
-            OperationDepositCurrencySearchBar.TextColor = Color.Green;
-            OperationDepositAmountEntry.TextColor = Color.Green;
+            // Notification
             depositSuccessful = true;
         }
 
         private void WithdrawCliked(object sender, EventArgs e)
         {
-            if (!Models.Currencies.Contains(Model.OperationWithdrawCurrency))
-            {
-                if (Model.OperationWithdrawCurrency != "")
-                {
-                    OperationWithdrawCurrencySearchBar.TextColor = Color.Red;
-                }
-                return;
-            }
             if (!App.Account.Withdraw(Model.OperationWithdrawCurrency, Model.OperationWithdrawAmount))
             {
-                OperationWithdrawAmountEntry.TextColor = Color.Red;
+                // Notification
                 return;
             }
-            OperationWithdrawCurrencySearchBar.TextColor = Color.Green;
-            OperationWithdrawAmountEntry.TextColor = Color.Green;
+            // Notification
             withdrawSuccessful = true;
         }
 
         private async void ExchangeCliked(object sender, EventArgs e)
         {
-            string currencyFrom = Model.OperationExchangeFromCurrency;
-            string currencyTo = Model.OperationExchangeToCurrency;
-            double amount = Model.OperationExchangeAmount;
-
-            if (!Models.Currencies.Contains(currencyFrom))
-            {
-                if (currencyFrom != "")
-                {
-                    OperationExchangeFromCurrencySearchBar.TextColor = Color.Red;
-                }
-                return;
-            }
-
-            if (!Models.Currencies.Contains(currencyTo))
-            {
-                if (currencyTo != "")
-                {
-                    OperationExchangeToCurrencySearchBar.TextColor = Color.Red;
-                }
-                return;
-            }
+            Currency currencyFrom = Model.OperationExchangeFromCurrency;
+            Currency currencyTo = Model.OperationExchangeToCurrency;
+            decimal amount = Model.OperationExchangeAmount;
 
             Task<Quote> getQuoteTask = QuoteService.FetchQuoteAsync(currencyFrom, currencyTo);
             Quote quote = await getQuoteTask;
@@ -253,103 +229,15 @@ namespace Wallet.Pages
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    OperationExchangeAmountEntry.TextColor = Color.Red;
+                    // Notification
                 });
             }
 
             Device.BeginInvokeOnMainThread(() =>
             {
-                OperationExchangeFromCurrencySearchBar.TextColor = Color.Green;
-                OperationExchangeToCurrencySearchBar.TextColor = Color.Green;
-                OperationExchangeAmountEntry.TextColor = Color.Green;
+                // Notification
                 exchangeSuccessful = true;
             });
-        }
-
-        private void OperationDepositTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (depositSuccessful)
-            {
-                OperationDepositCurrencySearchBar.TextColor = Color.Black;
-                OperationDepositAmountEntry.TextColor = Color.Black;
-                depositSuccessful = false;
-            }
-            else
-            {
-                if (sender is Entry)
-                {
-                    ((Entry)sender).TextColor = Color.Black;
-                }
-            }
-            if (sender is SearchBar)
-            {
-                ValidateCurrencySearchBar(sender);
-            }
-        }
-
-        private void OperationWithdrawTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (withdrawSuccessful)
-            {
-                OperationWithdrawCurrencySearchBar.TextColor = Color.Black;
-                OperationWithdrawAmountEntry.TextColor = Color.Black;
-                withdrawSuccessful = false;
-            }
-            else
-            {
-                if (sender is Entry)
-                {
-                    ((Entry)sender).TextColor = Color.Black;
-                }
-            }
-            if (sender is SearchBar)
-            {
-                ValidateCurrencySearchBar(sender);
-            }
-        }
-
-        private void OperationExchangeTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (exchangeSuccessful)
-            {
-                OperationExchangeFromCurrencySearchBar.TextColor = Color.Black;
-                OperationExchangeToCurrencySearchBar.TextColor = Color.Black;
-                OperationExchangeAmountEntry.TextColor = Color.Black;
-                exchangeSuccessful = false;
-            }
-            else
-            {
-                if (sender is Entry)
-                {
-                    ((Entry)sender).TextColor = Color.Black;
-                }
-            }
-            if (sender is SearchBar)
-            {
-                ValidateCurrencySearchBar(sender);
-            }
-        }
-
-        private void CheckCurrencyUnfocused(object sender, FocusEventArgs e)
-        {
-            ValidateCurrencySearchBar(sender);
-        }
-
-        private void ValidateCurrencySearchBar(object sender)
-        {
-            var searchBar = (SearchBar)sender;
-            searchBar.Text = searchBar.Text.ToUpper();
-            if (!Currencies.Contains(searchBar.Text))
-            {
-                if (searchBar.Text != "")
-                {
-                    searchBar.TextColor = Color.Red;
-                }
-            }
-            else
-            {
-                searchBar.TextColor = Color.Black;
-            }
         }
 
         private void CurrencyAmountChangesListener(object sender, NotifyCollectionChangedEventArgs e)
@@ -380,28 +268,7 @@ namespace Wallet.Pages
 
         private async void CalculateTotal()
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                TotalAmountLabel.TextColor = Color.Black;
-            });
-
             var targetCurrency = Model.TotalCurrency;
-            if (!Currencies.Contains(targetCurrency))
-            {
-                if (targetCurrency != "")
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        TotalCurrencySearchBar.TextColor = Color.Red;
-                    });
-                }
-                return;
-            }
-
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                TotalCurrencySearchBar.TextColor = Color.Black;
-            });
 
             Task<List<Quote>> getQuotesTask = QuoteService.FetchQuotesAsync(targetCurrency, App.Account);
             List<Quote> quotes = await getQuotesTask;
@@ -413,35 +280,23 @@ namespace Wallet.Pages
                 }
             }
 
-            double totalAmount = 0.0;
-            foreach (KeyValuePair<string, CurrencyAmount> tuple in App.Account)
+            decimal totalAmount = 0.0M;
+            foreach (KeyValuePair<Currency, CurrencyAmount> tuple in App.Account)
             {
-                double quoteValue = 0.0;
+                decimal quoteValue = 0.0M;
                 if (App.QuotesGraph.GetQuote(tuple.Key, targetCurrency, out quoteValue) != Result.Found)
                 {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        TotalAmountLabel.TextColor = Color.Red;
-                        Model.TotalAmount = 0;
-                    });
+                    // Notification
+                    Model.TotalAmount = 0;
                     return;
                 }
                 totalAmount += tuple.Value.Amount * quoteValue;
             }
 
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                TotalCurrencySearchBar.TextColor = Color.Navy;
-                TotalAmountLabel.TextColor = Color.Navy;
-                Model.TotalAmount = totalAmount;
-            });
-            return;
-        }
+            // Notification
+            Model.TotalAmount = totalAmount;
 
-        private void TotalCurrencyTextChanged(object sender, TextChangedEventArgs e)
-        {
-            TotalCurrencySearchBar.Text = TotalCurrencySearchBar.Text.ToUpper();
-            CalculateTotal();
+            return;
         }
     }
 }
