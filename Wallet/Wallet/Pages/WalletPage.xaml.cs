@@ -266,6 +266,11 @@ namespace Wallet.Pages
             CalculateTotal();
         }
 
+        private void TotalCurrencyChanged(object sender, EventArgs e)
+        {
+            CalculateTotal();
+        }
+
         private async void CalculateTotal()
         {
             var targetCurrency = Model.TotalCurrency;
