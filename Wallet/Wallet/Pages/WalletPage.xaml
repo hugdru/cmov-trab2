@@ -16,196 +16,207 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <StackLayout Padding="10,5">
-        <Label
-            FontAttributes="Bold"
-            FontSize="Large"
-            HorizontalTextAlignment="Start"
-            Text="Total"
-            TextColor="Gray"
-            VerticalTextAlignment="Center" />
-        <Grid Padding="10,5" HorizontalOptions="FillAndExpand">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <controls:BindablePicker
-                x:Name="TotalCurrencyPicker"
-                Title="Currency"
-                Grid.Row="0"
-                Grid.Column="0"
-                DisplayMemberPath="Name"
-                ItemSelected="TotalCurrencyChanged"
-                ItemsSource="{Binding Currencies}"
-                SelectedItem="{Binding TotalCurrency, Mode=TwoWay}" />
-
-            <StackLayout
-                Grid.Row="0"
-                Grid.Column="1"
-                Orientation="Horizontal">
-                <Label
-                    x:Name="TotalAmountLabel"
-                    FontSize="Medium"
-                    Text="{Binding TotalAmount, Mode=OneWay}"
-                    VerticalOptions="Center" />
-            </StackLayout>
-        </Grid>
-
-        <Label
-            FontAttributes="Bold"
-            FontSize="Large"
-            HorizontalTextAlignment="Start"
-            Text="Operations"
-            TextColor="Gray"
-            VerticalTextAlignment="Center" />
-        <Grid Padding="10,5" HorizontalOptions="FillAndExpand">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="auto" />
-            </Grid.ColumnDefinitions>
-
-            <Grid
-                Grid.Row="0"
-                Grid.Column="0"
-                HorizontalOptions="FillAndExpand">
+    <ScrollView>
+        <StackLayout Padding="10,5">
+            <Label
+                FontAttributes="Bold"
+                FontSize="Large"
+                HorizontalTextAlignment="Start"
+                Text="Total"
+                TextColor="Gray"
+                VerticalTextAlignment="End" />
+            <Grid Padding="10,5" HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <controls:BindablePicker
-                    x:Name="OperationDepositCurrencyPicker"
-                    Title="Currency"
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    DisplayMemberPath="Name"
-                    ItemsSource="{Binding Currencies}"
-                    SelectedItem="{Binding OperationDepositCurrency, Mode=TwoWay}" />
-                <Entry
-                    x:Name="OperationDepositAmountEntry"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Keyboard="Numeric"
-                    Placeholder="Amount"
-                    Text="{Binding OperationDepositAmount, Mode=OneWayToSource}"
-                    VerticalOptions="Center" />
-            </Grid>
-            <Button
-                Grid.Row="0"
-                Grid.Column="1"
-                Clicked="DepositCliked"
-                Text="D" />
-
-            <Grid
-                Grid.Row="1"
-                Grid.Column="0"
-                HorizontalOptions="FillAndExpand">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <controls:BindablePicker
-                    x:Name="OperationWithdrawCurrencyPicker"
+                    x:Name="TotalCurrencyPicker"
                     Title="Currency"
                     Grid.Row="0"
                     Grid.Column="0"
                     DisplayMemberPath="Name"
+                    ItemSelected="TotalCurrencyChanged"
                     ItemsSource="{Binding Currencies}"
-                    SelectedItem="{Binding OperationWithdrawCurrency, Mode=TwoWay}" />
-                <Entry
-                    x:Name="OperationWithdrawAmountEntry"
+                    SelectedItem="{Binding TotalCurrency, Mode=TwoWay}"
+                    VerticalOptions="End" />
+
+                <StackLayout
                     Grid.Row="0"
                     Grid.Column="1"
-                    Keyboard="Numeric"
-                    Placeholder="Amount"
-                    Text="{Binding OperationWithdrawAmount, Mode=OneWayToSource}"
-                    VerticalOptions="Center" />
+                    Orientation="Horizontal"
+                    VerticalOptions="End">
+                    <Label
+                        x:Name="TotalAmountLabel"
+                        FontSize="Medium"
+                        Text="{Binding TotalAmount, Mode=OneWay}"
+                        VerticalOptions="End" />
+                </StackLayout>
             </Grid>
-            <Button
-                Grid.Row="1"
-                Grid.Column="1"
-                Clicked="WithdrawCliked"
-                Text="W" />
 
-            <Grid
-                Grid.Row="2"
-                Grid.Column="0"
-                HorizontalOptions="FillAndExpand">
+            <Label
+                FontAttributes="Bold"
+                FontSize="Large"
+                HorizontalTextAlignment="Start"
+                Text="Operations"
+                TextColor="Gray"
+                VerticalOptions="End" />
+            <Grid Padding="10,5" HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
-                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
-                <controls:BindablePicker
-                    x:Name="OperationExchangeFromCurrencyPicker"
-                    Title="Currency"
+
+                <Grid
                     Grid.Row="0"
                     Grid.Column="0"
-                    DisplayMemberPath="Name"
-                    ItemsSource="{Binding Currencies}"
-                    SelectedItem="{Binding OperationExchangeFromCurrency, Mode=TwoWay}" />
-                <Entry
-                    x:Name="OperationExchangeAmountEntry"
+                    HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <controls:BindablePicker
+                        x:Name="OperationDepositCurrencyPicker"
+                        Title="Currency"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding Currencies}"
+                        SelectedItem="{Binding OperationDepositCurrency, Mode=TwoWay}"
+                        VerticalOptions="End" />
+                    <Entry
+                        x:Name="OperationDepositAmountEntry"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Placeholder="Amount"
+                        Text="{Binding OperationDepositAmount, Mode=OneWayToSource}"
+                        VerticalOptions="End" />
+                </Grid>
+                <Button
                     Grid.Row="0"
                     Grid.Column="1"
-                    Keyboard="Numeric"
-                    Placeholder="Amount"
-                    Text="{Binding OperationExchangeAmount, Mode=OneWayToSource}"
-                    VerticalOptions="Center" />
-                <controls:BindablePicker
-                    x:Name="OperationExchangeToCurrencyPicker"
-                    Title="Currency"
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    DisplayMemberPath="Name"
-                    ItemsSource="{Binding Currencies}"
-                    SelectedItem="{Binding OperationExchangeToCurrency, Mode=TwoWay}" />
-            </Grid>
-            <Button
-                Grid.Row="2"
-                Grid.Column="1"
-                Clicked="ExchangeCliked"
-                Text="E" />
-        </Grid>
+                    Clicked="DepositCliked"
+                    Text="D"
+                    VerticalOptions="End" />
 
-        <Label
-            FontAttributes="Bold"
-            FontSize="Large"
-            HorizontalTextAlignment="Start"
-            Text="Account"
-            TextColor="Gray"
-            VerticalTextAlignment="Center" />
-        <ListView
-            x:Name="AccountWalletListView"
-            IsVisible="True"
-            ItemsSource="{Binding AccountWallet, Mode=OneWay}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Horizontal">
-                            <Label Text="{Binding Currency, Mode=OneWay}" />
-                            <Label Text="{Binding Amount, Mode=OneWay}" />
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </StackLayout>
+                <Grid
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:BindablePicker
+                        x:Name="OperationWithdrawCurrencyPicker"
+                        Title="Currency"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding Currencies}"
+                        SelectedItem="{Binding OperationWithdrawCurrency, Mode=TwoWay}"
+                        VerticalOptions="End" />
+                    <Entry
+                        x:Name="OperationWithdrawAmountEntry"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Placeholder="Amount"
+                        Text="{Binding OperationWithdrawAmount, Mode=OneWayToSource}"
+                        VerticalOptions="End" />
+                </Grid>
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Clicked="WithdrawCliked"
+                    Text="W"
+                    VerticalOptions="End" />
+
+                <Grid
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:BindablePicker
+                        x:Name="OperationExchangeFromCurrencyPicker"
+                        Title="Currency"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding Currencies}"
+                        SelectedItem="{Binding OperationExchangeFromCurrency, Mode=TwoWay}"
+                        VerticalOptions="End" />
+                    <Entry
+                        x:Name="OperationExchangeAmountEntry"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Placeholder="Amount"
+                        Text="{Binding OperationExchangeAmount, Mode=OneWayToSource}"
+                        VerticalOptions="End" />
+                    <controls:BindablePicker
+                        x:Name="OperationExchangeToCurrencyPicker"
+                        Title="Currency"
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding Currencies}"
+                        SelectedItem="{Binding OperationExchangeToCurrency, Mode=TwoWay}"
+                        VerticalOptions="End" />
+                </Grid>
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Clicked="ExchangeCliked"
+                    Text="E"
+                    VerticalOptions="End" />
+            </Grid>
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="Large"
+                HorizontalTextAlignment="Start"
+                Text="Account"
+                TextColor="Gray"
+                VerticalTextAlignment="End" />
+            <ListView
+                x:Name="AccountWalletListView"
+                IsVisible="True"
+                ItemsSource="{Binding AccountWallet, Mode=OneWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="{Binding Currency, Mode=OneWay}" />
+                                <Label Text="{Binding Amount, Mode=OneWay}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ScrollView>
 </ContentPage>
