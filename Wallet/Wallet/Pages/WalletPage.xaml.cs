@@ -304,6 +304,11 @@ namespace Wallet.Pages
             return;
         }
 
+        public ObservableCollection<CurrencyAmount> GetAccountWallet()
+        {
+            return Model.AccountWallet;
+        }
+
         private void SetMessage(bool success, string message)
         {
             if (String.IsNullOrEmpty(message) || String.IsNullOrWhiteSpace(message))

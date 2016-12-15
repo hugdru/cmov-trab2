@@ -14,9 +14,10 @@ namespace Wallet.Pages
         {
             var walletPage = new WalletPage();
             var currenciesPage = new CurrenciesPage(App.Currencies, walletPage.GetBindableCurrencies());
-
+            var graphPage = new GraphPage(walletPage.GetAccountWallet());
             Children.Add(walletPage);
             Children.Add(currenciesPage);
+            Children.Add(graphPage);
         }
     }
 }
