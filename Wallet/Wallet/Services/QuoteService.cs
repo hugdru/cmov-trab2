@@ -73,7 +73,7 @@ namespace Wallet.Services
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
                 return null;
             }
