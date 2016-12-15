@@ -128,6 +128,18 @@ namespace Wallet.Pages
             }
             public ObservableCollection<CurrencyAmount> AccountWallet { set; get; }
             public ObservableCollection<Currency> Currencies { set; get; }
+            private String message;
+            public String Message
+            {
+                set
+                {
+                    SetProperty(ref message, value);
+                }
+                get
+                {
+                    return message;
+                }
+            }
 
             public WalletPageModel()
             {
@@ -154,10 +166,6 @@ namespace Wallet.Pages
 
         private WalletPageModel Model;
 
-        private bool depositSuccessful = false;
-        private bool withdrawSuccessful = false;
-        private bool exchangeSuccessful = false;
-
         public WalletPage()
         {
             InitializeComponent();
@@ -181,22 +189,20 @@ namespace Wallet.Pages
         {
             if (!App.Account.Deposit(Model.OperationDepositCurrency, Model.OperationDepositAmount))
             {
-                // Notification
+                SetMessage(false, "DEPOSIT FAILED");
                 return;
             }
-            // Notification
-            depositSuccessful = true;
+            SetMessage(true, "DEPOSIT SUCCESSFUL");
         }
 
         private void WithdrawCliked(object sender, EventArgs e)
         {
             if (!App.Account.Withdraw(Model.OperationWithdrawCurrency, Model.OperationWithdrawAmount))
             {
-                // Notification
+                SetMessage(false, "WITHDRAW FAILED");
                 return;
             }
-            // Notification
-            withdrawSuccessful = true;
+            SetMessage(true, "WITHDRAW SUCCESSFUL");
         }
 
         private async void ExchangeCliked(object sender, EventArgs e)
@@ -213,6 +219,7 @@ namespace Wallet.Pages
                 Result result = App.QuotesGraph.UpsertQuote(quote);
                 if (result != Result.Inserted && result != Result.Updated)
                 {
+                    SetMessage(false, "EXCHANGE QUOTE UPSERT FAILED");
                     return;
                 }
             }
@@ -222,22 +229,17 @@ namespace Wallet.Pages
                 Result result = App.QuotesGraph.GetQuote(quote);
                 if (result != Result.Found)
                 {
+                    SetMessage(false, "EXCHANGE QUOTE NOT FOUND LOCALLY");
                     return;
                 }
             }
             if (!App.Account.Exchange(amount, currencyFrom, quote.Value, currencyTo))
             {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    // Notification
-                });
-            }
 
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                // Notification
-                exchangeSuccessful = true;
-            });
+                SetMessage(false, "EXCHANGE FAILED");
+                return;
+            }
+            SetMessage(true, "EXCHANGE SUCCESSFUL");
         }
 
         private void CurrencyAmountChangesListener(object sender, NotifyCollectionChangedEventArgs e)
@@ -291,17 +293,42 @@ namespace Wallet.Pages
                 decimal quoteValue = 0.0M;
                 if (App.QuotesGraph.GetQuote(tuple.Key, targetCurrency, out quoteValue) != Result.Found)
                 {
-                    // Notification
+                    SetMessage(false, "MISSING QUOTE CANT CALCULATE TOTAL");
                     Model.TotalAmount = 0;
                     return;
                 }
                 totalAmount += tuple.Value.Amount * quoteValue;
             }
-
-            // Notification
+            DisableMessage();
             Model.TotalAmount = totalAmount;
-
             return;
+        }
+
+        private void SetMessage(bool success, string message)
+        {
+            if (String.IsNullOrEmpty(message) || String.IsNullOrWhiteSpace(message))
+            {
+                return;
+            }
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                MessageLabel.TextColor = Color.Red;
+                if (success)
+                {
+                    MessageLabel.TextColor = Color.Green;
+                }
+                Model.Message = message;
+                MessageLabel.IsVisible = true;
+            });
+        }
+
+        private void DisableMessage()
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                //MessageLabel.IsVisible = false;
+                Model.Message = "";
+            });
         }
     }
 }

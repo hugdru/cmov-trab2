@@ -19,6 +19,11 @@
     <ScrollView>
         <StackLayout Padding="10,5">
             <Label
+                x:Name="MessageLabel"
+                HorizontalTextAlignment="Center"
+                IsVisible="False"
+                Text="{Binding Message, Mode=OneWay}" />
+            <Label
                 FontAttributes="Bold"
                 FontSize="Large"
                 HorizontalTextAlignment="Start"
