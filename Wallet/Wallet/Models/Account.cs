@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,7 +17,7 @@ namespace Wallet.Models
         public bool Deposit(Currency currency, decimal amount)
         {
 
-            if (amount < 0 || currency == null)
+            if (amount < 0 || Currency.IsNullOrEmpty(currency))
             {
                 return false;
             }
@@ -40,7 +41,7 @@ namespace Wallet.Models
 
         public bool Withdraw(Currency currency, decimal amount)
         {
-            if (amount < 0)
+            if (amount < 0 || Currency.IsNullOrEmpty(currency))
             {
                 return false;
             }
@@ -64,7 +65,7 @@ namespace Wallet.Models
 
         public bool Exchange(decimal fromAmount, Currency currencyFrom, decimal quoteValue, Currency currencyTo)
         {
-            if (currencyFrom == null || currencyTo == null)
+            if (Currency.IsNullOrEmpty(currencyFrom) || Currency.IsNullOrEmpty(currencyTo))
             {
                 return false;
             }
@@ -82,6 +83,31 @@ namespace Wallet.Models
                     Deposit(currencyFrom, fromAmount);
                     return false;
                 };
+                return true;
+            }
+        }
+
+        public bool RemoveCurrency(Currency currency)
+        {
+            if (Currency.IsNullOrEmpty(currency))
+            {
+                return false;
+            }
+            lock (syncLock)
+            {
+                try
+                {
+                    CurrencyAmount currencyAmount = null;
+                    if (!wallet.TryRemove(currency, out currencyAmount))
+                    {
+                        return false;
+                    }
+                    UICollection?.Remove(currencyAmount);
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
                 return true;
             }
         }
@@ -148,9 +174,9 @@ namespace Wallet.Models
             }
             public event PropertyChangedEventHandler PropertyChanged;
 
-            public CurrencyAmount(Currency currency, decimal amount = 0)
+            public CurrencyAmount(Models.Currency currency, decimal amount = 0)
             {
-                if (currency == null)
+                if (Models.Currency.IsNullOrEmpty(currency))
                 {
                     throw new System.ArgumentNullException();
                 }

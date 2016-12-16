@@ -144,14 +144,14 @@ namespace Wallet.Pages
             public WalletPageModel()
             {
                 TotalCurrency = null;
-                TotalAmount = 0;
+                TotalAmount = 0.0M;
                 OperationDepositCurrency = null;
-                OperationDepositAmount = 0;
+                OperationDepositAmount = 0.0M;
                 OperationWithdrawCurrency = null;
-                OperationWithdrawAmount = 0;
+                OperationWithdrawAmount = 0.0M;
                 OperationExchangeFromCurrency = null;
                 OperationExchangeToCurrency = null;
-                OperationExchangeAmount = 0;
+                OperationExchangeAmount = 0.0M;
                 AccountWallet = new ObservableCollection<CurrencyAmount>();
                 Currencies = new ObservableCollection<Currency>();
             }
@@ -276,6 +276,10 @@ namespace Wallet.Pages
         private async void CalculateTotal()
         {
             var targetCurrency = Model.TotalCurrency;
+            if (Currency.IsNullOrEmpty(targetCurrency))
+            {
+                return;
+            }
 
             Task<List<Quote>> getQuotesTask = QuoteService.FetchQuotesAsync(targetCurrency, App.Account);
             List<Quote> quotes = await getQuotesTask;
@@ -299,7 +303,6 @@ namespace Wallet.Pages
                 }
                 totalAmount += tuple.Value.Amount * quoteValue;
             }
-            DisableMessage();
             Model.TotalAmount = totalAmount;
             return;
         }
@@ -317,10 +320,13 @@ namespace Wallet.Pages
             }
             Device.BeginInvokeOnMainThread(() =>
             {
-                MessageLabel.TextColor = Color.Red;
                 if (success)
                 {
                     MessageLabel.TextColor = Color.Green;
+                }
+                else
+                {
+                    MessageLabel.TextColor = Color.Red;
                 }
                 Model.Message = message;
                 MessageLabel.IsVisible = true;
@@ -334,6 +340,32 @@ namespace Wallet.Pages
                 //MessageLabel.IsVisible = false;
                 Model.Message = "";
             });
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if (Currency.IsNullOrEmpty(Model.TotalCurrency))
+            {
+                Model.TotalAmount = 0.0M;
+            }
+        }
+
+        private async void AccountWalletListViewItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            if (e.SelectedItem == null) return;
+            var currencyAmount = (CurrencyAmount)e.SelectedItem;
+            var answer = await DisplayAlert("Question?", "Do you want to delete this currency", "Yes", "No");
+            if (answer)
+            {
+                if (!App.Account.RemoveCurrency(new Currency(currencyAmount.Currency)))
+                {
+                    SetMessage(false, "FAILED TO REMOVE CURRENCY FROM ACCOUNT");
+                    return;
+                }
+                SetMessage(true, "SUCCESSFULLY REMOVED CURRENCY FROM ACCOUNT");
+            }
+            ((ListView)sender).SelectedItem = null;
         }
     }
 }

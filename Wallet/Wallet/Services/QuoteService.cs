@@ -20,7 +20,7 @@ namespace Wallet.Services
 
         public static bool FetchQuoteByCallback(Currency currencyFrom, Currency currencyTo, AsyncCallback callback)
         {
-            if (currencyFrom == null || currencyTo == null || callback == null)
+            if (Currency.IsNullOrEmpty(currencyFrom) || Currency.IsNullOrEmpty(currencyTo) || callback == null)
             {
                 return false;
             }
@@ -82,6 +82,10 @@ namespace Wallet.Services
 
         public static async Task<List<Quote>> FetchQuotesAsync(Currency targetCurrency, Account account)
         {
+            if (Currency.IsNullOrEmpty(targetCurrency))
+            {
+                return null;
+            }
             List<Quote> quotes = new List<Quote>();
             foreach (KeyValuePair<Currency, CurrencyAmount> tuple in account)
             {
@@ -100,7 +104,7 @@ namespace Wallet.Services
         {
             try
             {
-                if (currencyFrom == null || currencyTo == null)
+                if (Currency.IsNullOrEmpty(currencyFrom) || Currency.IsNullOrEmpty(currencyTo))
                 {
                     return null;
                 }

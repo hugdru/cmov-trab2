@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Wallet.Models
 {
@@ -18,7 +19,7 @@ namespace Wallet.Models
 
         public Result UpsertQuote(Quote quote)
         {
-            if (quote.Value <= 0 || quote.From == null || quote.To == null)
+            if (quote.Value <= 0 || Quote.IsNullOrEmpty(quote))
             {
                 return Result.Error;
             }
@@ -49,7 +50,7 @@ namespace Wallet.Models
         public Result GetQuote(Currency from, Currency to, out decimal value)
         {
             value = 0;
-            if (from == null || to == null)
+            if (Currency.IsNullOrEmpty(from) || Currency.IsNullOrEmpty(to))
             {
                 return Result.Error;
             }
@@ -72,7 +73,7 @@ namespace Wallet.Models
         public Result GetQuote(string from, string to, out decimal value)
         {
             value = 0;
-            if (from == null || to == null)
+            if (String.IsNullOrEmpty(from) || String.IsNullOrEmpty(to))
             {
                 return Result.Error;
             }
@@ -94,6 +95,10 @@ namespace Wallet.Models
 
         public Result GetQuote(Quote quote)
         {
+            if (Quote.IsNullOrEmpty(quote))
+            {
+                return Result.Error;
+            }
             decimal value;
             var result = GetQuote(quote.From, quote.To, out value);
             if (result == Result.Found)

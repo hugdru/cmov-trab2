@@ -45,5 +45,10 @@ namespace Wallet.Models
         {
             return Name.GetHashCode();
         }
+
+        public static bool IsNullOrEmpty(Currency currency)
+        {
+            return currency == null || String.IsNullOrEmpty(currency.Name);
+        }
     }
 }
