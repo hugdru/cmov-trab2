@@ -355,7 +355,7 @@ namespace Wallet.Pages
         {
             if (e.SelectedItem == null) return;
             var currencyAmount = (CurrencyAmount)e.SelectedItem;
-            var answer = await DisplayAlert("Question?", "Do you want to delete this currency", "Yes", "No");
+            var answer = await DisplayAlert("Question?", "Do you want to delete " + currencyAmount.Currency + " from your Account", "Yes", "No");
             if (answer)
             {
                 if (!App.Account.RemoveCurrency(new Currency(currencyAmount.Currency)))
